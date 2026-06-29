@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短链接生成</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .result-url {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        .result-url input {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+        }
+        .result-url input:focus {
+            outline: none;
+        }
+        .copy-btn {
+            padding: 6px 14px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .copy-btn:hover { background: #5568d3; }
+        .copy-btn.copied { background: #22c55e; }
+        .error {
+            margin-top: 16px;
+            padding: 12px;
+            background: #fef2f2;
+            color: #dc2626;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+        .error.show { display: block; }
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 16px;
+            display: none;
+        }
+        .loading.show { display: block; }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 长链接转短链接</h1>
+        
+        <div class="input-group">
+            <label for="longUrl">长链接地址</label>
+            <input type="text" id="longUrl" placeholder="请输入要缩短的长链接，例如 https://www.example.com/very/long/url">
+        </div>
+        
+        <div class="input-group">
+            <label for="title">标题（可选）</label>
+            <input type="text" id="title" placeholder="给短链接起个名字">
+        </div>
+        
+        <button class="btn" id="generateBtn" onclick="generateShortLink()">生成短链接</button>
+        
+        <div class="loading" id="loading">
+            <span class="spinner"></span>生成中...
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="result" id="result">
+            <div class="result-label">生成的短链接：</div>
+            <div class="result-url">
+                <input type="text" id="shortUrl" readonly>
+                <button class="copy-btn" id="copyBtn" onclick="copyUrl()">复制</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+    <script>
+        // ====== 配置信息 ======
+        const APP_ID = 'app_40e2727e86a86e323d50c08eb7e10f8f';
+        const APP_SECRET = '3f070992995711978ebc5deaee1e54f43cac6ec609adc85e378c647a2a9a963e';
+        const BASE_URL = 'https://www.anrly.com.cn';
+        const DOMAIN = 'www.anrly.com.cn';
+
+        // 生成随机 nonce
+        function generateNonce() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 16; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // 参数按 key 排序后转 JSON
+        function sortParams(params) {
+            if (!params || Object.keys(params).length === 0) {
+                return '{}';
+            }
+            const sortedKeys = Object.keys(params).sort();
+            const sortedObj = {};
+            sortedKeys.forEach(key => {
+                sortedObj[key] = params[key];
+            });
+            return JSON.stringify(sortedObj);
+        }
+
+        // 生成签名
+        function generateSignature(method, path, params, timestamp, nonce) {
+            const sortedJson = sortParams(params);
+            const stringToSign = method.toUpperCase() + path + sortedJson + timestamp + nonce;
+            const signature = CryptoJS.HmacSHA256(stringToSign, APP_SECRET).toString(CryptoJS.enc.Hex);
+            return signature;
+        }
+
+        // 发送 API 请求
+        async function apiRequest(method, path, data) {
+            const timestamp = Math.floor(Date.now() / 1000);
+            const nonce = generateNonce();
+            
+            const signParams = (method.toUpperCase() === 'GET') ? {} : (data || {});
+            const signature = generateSignature(method, path, signParams, timestamp, nonce);
+            
+            const headers = {
+                'X-App-Id': APP_ID,
+                'X-Signature': signature,
+                'X-Timestamp': timestamp.toString(),
+                'X-Nonce': nonce,
+                'Content-Type': 'application/json'
+            };
+            
+            const url = BASE_URL + path;
+            
+            const options = {
+                method: method.toUpperCase(),
+                headers: headers
+            };
+            
+            if (method.toUpperCase() !== 'GET' && data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            const response = await fetch(url, options);
+            return await response.json();
+        }
+
+        // 生成短链接
+        async function generateShortLink() {
+            const longUrl = document.getElementById('longUrl').value.trim();
+            const title = document.getElementById('title').value.trim();
+            
+            if (!longUrl) {
+                showError('请输入长链接地址');
+                return;
+            }
+            
+            if (!longUrl.startsWith('http://') && !longUrl.startsWith('https://')) {
+                showError('请输入以 http:// 或 https:// 开头的有效链接');
+                return;
+            }
+            
+            const btn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const error = document.getElementById('error');
+            
+            btn.disabled = true;
+            loading.classList.add('show');
+            result.classList.remove('show');
+            error.classList.remove('show');
+            
+            try {
+                const data = {
+                    original_url: longUrl,
+                    domain: DOMAIN
+                };
+                if (title) {
+                    data.title = title;
+                }
+                
+                const res = await apiRequest('POST', '/api/v1/short_links', data);
+                
+                if (res.code === 0 && res.data && res.data.short_url) {
+                    document.getElementById('shortUrl').value = res.data.short_url;
+                    result.classList.add('show');
+                } else {
+                    showError(res.message || '生成失败');
+                }
+            } catch (err) {
+                showError('网络错误，请检查网络连接：' + err.message);
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        // 显示错误
+        function showError(msg) {
+            const error = document.getElementById('error');
+            error.textContent = msg;
+            error.classList.add('show');
+        }
+
+        // 复制链接
+        function copyUrl() {
+            const input = document.getElementById('shortUrl');
+            const btn = document.getElementById('copyBtn');
+            
+            input.select();
+            document.execCommand('copy');
+            
+            btn.textContent = '已复制';
+            btn.classList.add('copied');
+            
+            setTimeout(() => {
+                btn.textContent = '复制';
+                btn.classList.remove('copied');
+            }, 2000);
+        }
+
+        // 回车触发
+        document.getElementById('longUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateShortLink();
+            }
+        });
+    </script>
+</body>
+</html>
