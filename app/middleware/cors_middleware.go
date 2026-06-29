@@ -23,7 +23,7 @@ func DefaultCorsConfig() CorsConfig {
 	return CorsConfig{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", HeaderWorkspaceID},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", HeaderWorkspaceID, "X-App-Id", "X-Signature", "X-Timestamp", "X-Nonce"},
 		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           86400,
