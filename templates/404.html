@@ -13,10 +13,10 @@
         <div class="container">
             <section class="error-content" role="alert" aria-labelledby="pageTitle">
                 <div class="status-icon error-icon">{{template "icon_search" .}}</div>
-                <div class="status-kicker">短链无法解析</div>
-                <h1 class="error-title" id="pageTitle">短链接不存在</h1>
+                <div class="status-kicker">页面无法访问</div>
+                <h1 class="error-title" id="pageTitle">页面不存在</h1>
                 <p class="error-message">
-                    您访问的短链接不存在或已经失效。请检查链接是否完整，或联系链接提供方获取新的访问地址。
+                    您访问的页面不存在或服务器暂时无法响应。请检查链接是否正确，或稍后重试。
                 </p>
                 <div class="error-code">错误代码：404</div>
                 <div class="action-buttons">
@@ -26,10 +26,10 @@
                 <div class="suggestions">
                     <h3>可能的原因</h3>
                     <ul>
-                        <li>短链接已过期、被删除或尚未创建。</li>
+                        <li>服务器内部错误，请稍后重试。</li>
+                        <li>您访问的文件不存在或已被移除。</li>
                         <li>链接地址在复制或分享时被截断。</li>
-                        <li>当前域名下没有匹配的短码。</li>
-                        <li>服务暂时不可用，请稍后重试。</li>
+                        <li>服务暂时不可用，请稍后再试。</li>
                     </ul>
                 </div>
             </section>
