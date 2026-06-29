@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**木雷短网址 (Muleiwu URL Shortener)** is an enterprise-grade URL shortening service written in Go. It supports multi-domain short links, A/B testing, user management, real-time analytics, and can run in two deployment modes:
+**南在南方 (SouthExists URL Shortener)** is an enterprise-grade URL shortening service written in Go. It supports multi-domain short links, A/B testing, user management, real-time analytics, and can run in two deployment modes:
 
 - **Standalone Mode**: SQLite + in-memory cache, zero external dependencies
 - **Production Mode**: MySQL/PostgreSQL + Redis for high concurrency

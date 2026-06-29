@@ -1,10 +1,10 @@
-# 木雷短网址 - 企业级短链接服务平台
+# 南在南方 - 企业级短链接服务平台
 
 [![Go Version](https://img.shields.io/badge/Go-1.25.0-blue.svg)](https://golang.org)
 [![Gin Framework](https://img.shields.io/badge/Gin-v1.10.1-green.svg)](https://github.com/gin-gonic/gin)
 [![GORM](https://img.shields.io/badge/Gorm-v1.30.3-orange.svg)](https://gorm.io)
 
-> 🚀 木雷坞开源的一个功能完善、高性能的企业级短链接服务平台，支持多域名、AB测试、用户管理、实时统计等功能。
+> 🚀 南在南方开源的一个功能完善、高性能的企业级短链接服务平台，支持多域名、AB测试、用户管理、实时统计等功能。
 
 ### ✨ 新特性：独立部署模式
 - 🎯 **零依赖部署**: 支持SQLite + 内存缓存，无需安装数据库和Redis
@@ -30,7 +30,7 @@
 |                                     QQ                                      |                                 企业微信                                       |
 |:---------------------------------------------------------------------------:|:--------------------------------------------------------------------------:|
 | ![wechat_qr_code.png](https://static.1ms.run/dwz/image/httpsn3.inklmKc.png) | ![wechat_qr_code.png](https://static.1ms.run/dwz/image/wechat_qr_code.png) |
-|       QQ群号：1021660914 <br /> [点击链接加入群聊【木雷坞开源家】](https://n3.ink/lmKc)        |                                扫描上方二维码加入微信群                                |
+|       QQ群号：1021660914 <br /> [点击链接加入群聊【南在南方开源家】](https://n3.ink/lmKc)        |                                扫描上方二维码加入微信群                                |
 
 
 
